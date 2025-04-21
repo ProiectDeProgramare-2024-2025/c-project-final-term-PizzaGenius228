@@ -5,10 +5,16 @@
 #include <ctype.h>
 #include <time.h>
 
-
+#define RED     "\x1b[31m"
+#define GREEN   "\x1b[32m"
+#define YELLOW  "\x1b[33m"
+#define BLUE    "\x1b[34m"
+#define MAGENTA "\x1b[35m"
+#define CYAN    "\x1b[36m"
+#define RESET   "\x1b[0m"
 
 typedef struct {
-    int orderID[100];
+    int orderID;
     char userName[20];
     char restaurant[50];
     char items[512];
@@ -18,7 +24,7 @@ typedef struct {
 
 Order orderHistory[100]; //storing order history
 int orderCount = 0;
-char deliveryAdress[100] = "";
+char deliveryAddress[100] = "";
 int order_number;
 
 struct pizza{
@@ -55,7 +61,7 @@ void loadOrdersFromFile() {
     while (fgets(line, sizeof(line), file)) {
         if (strncmp(line, "--------", 8) == 0) continue;
         sscanf(line, "%d,%[^,],%[^,],%[^,],%[^,],%[^\n]",
-               &orderHistory[orderCount].orderID[0],
+               &orderHistory[orderCount].orderID,
                orderHistory[orderCount].userName,
                orderHistory[orderCount].restaurant,
                orderHistory[orderCount].items,
@@ -72,20 +78,20 @@ void header()
 {
     SystemClear();
     printf("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
-    printf("Welcome to \" Food Delivery System \"\n\n");
+    printf("Welcome to "BLUE"\" Food Delivery System \""RESET"\n\n");
     printf("Please choose a partner Restaurant to see their menu:\n\n");
-    printf("1 - El Diablo\n");
-    printf("2 - Mind Space\n");
-    printf("3 - Taglatele\n");
-    printf("4 - Crazy Pizza\n");
-    printf("5 - Indian Bistro\n");
-    printf("6 - Review Odrer History\n");
-    printf("7 - Load From File\n");
-    printf("0 - EXIT\n\n");
+    printf("1 - "CYAN"El Diablo"RESET"\n");
+    printf("2 - "CYAN"Mind Space"RESET"\n");
+    printf("3 - "CYAN"Taglatele"RESET"\n");
+    printf("4 - "CYAN"Crazy Pizza"RESET"\n");
+    printf("5 - "CYAN"Indian Bistro"RESET"\n");
+    printf("6 - "CYAN"Review Order History"RESET"\n");
+    printf("7 - "CYAN"Load From File"RESET"\n");
+    printf("0 - "RED"EXIT"RESET"\n\n");
     printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
 }
 
-void getAdress()
+void getAddress()
 {
     // if i would like to order food at different addresses, i have to comment out the if. Otherwise, the address will be saved.
     SystemClear();
@@ -93,14 +99,15 @@ void getAdress()
     printf("Enter Your Name: ");
     fgets(name, sizeof(name), stdin);
     name[strcspn(name, "\n")] = '\0';
+    strcpy(orderHistory[orderCount].userName, name);
 
-     if(strlen(deliveryAdress) == 0)
+     if(strlen(deliveryAddress) == 0)
      {
     strcpy(orderHistory[orderCount].userName, name);
-    printf("\nPlease enter your delivery adress:");
-    fgets(deliveryAdress, sizeof(deliveryAdress), stdin);
-    deliveryAdress[strcspn(deliveryAdress, "\n")] = '\0';
-    printf("Adress Saved Successfully!\n");
+    printf("\nPlease enter your delivery address:");
+    fgets(deliveryAddress, sizeof(deliveryAddress), stdin);
+    deliveryAddress[strcspn(deliveryAddress, "\n")] = '\0';
+    printf("Address Saved Successfully!\n");
     }
 }
 
@@ -151,7 +158,7 @@ void getAdress()
 void placeOrder(const char* restaurant)
 {
     SystemClear();
-    getAdress();
+    getAddress();
     time_t t = time(NULL);
     struct tm* date = localtime(&t);
     char formattedTime[20];
@@ -159,9 +166,9 @@ void placeOrder(const char* restaurant)
 
     
     strcpy(orderHistory[orderCount].restaurant, restaurant);
-    strcpy(orderHistory[orderCount].location, deliveryAdress);
+    strcpy(orderHistory[orderCount].location, deliveryAddress);
     strcpy(orderHistory[orderCount].dateTime, formattedTime);
-    orderHistory[orderCount].orderID[0] = orderCount;
+    orderHistory[orderCount].orderID = orderCount;
     
     FILE* file = fopen("orders.txt", "a");
     static char lastDate[20] = ""; //for holding the last date written
@@ -170,9 +177,10 @@ void placeOrder(const char* restaurant)
             strcpy(lastDate, orderHistory->dateTime);
             fprintf(file, "-------- Orders from %s --------\n", lastDate);
         }
+    orderHistory[orderCount].orderID = orderCount;
     if (file != NULL) {
         fprintf(file, "%d,%s,%s,%s,%s,%s\n",
-                orderHistory[orderCount].orderID[0],
+                orderHistory[orderCount].orderID,
                 orderHistory[orderCount].userName,
                 orderHistory[orderCount].restaurant,
                 orderHistory[orderCount].items,
@@ -180,11 +188,11 @@ void placeOrder(const char* restaurant)
                 orderHistory[orderCount].dateTime);
         fclose(file);
     } else {
-        perror("Failed to open file");
+        perror(""RED"Failed to open file"RESET"");
     }
 
     orderCount++;
-    printf("Order Placed Successfully!\n");
+    printf(""GREEN"Order Placed Successfully!"RESET"\n");
 }
 
 void viewOrders()
@@ -198,8 +206,8 @@ void viewOrders()
         printf("\nNo previous orders!\n");
         return;
     }
-
-    printf("\nOrder History: \n");
+    int i;
+    printf("\nOrder History: %d\n", orderCount);
 
     for(int i=0; i < orderCount; i++)
     {
@@ -211,7 +219,7 @@ void viewOrders()
         printf("Order Time: %s\n", orderHistory[i].dateTime);
     }
 
-    printf("If you would like to go back to Restaurnat List, press 1.\n Enter Choice: ");
+    printf("\nIf you would like to go back to Restaurnat List, press 1.\n Enter Choice: ");
     scanf("%d", &ret);
     if(ret == 1)
         header();
@@ -224,20 +232,20 @@ void customize_pizza(int customize)
 
     SystemClear();
 
-    printf("Choose Size: S - Small, M - Medium, L - Large, XL - Extra Large, XXL - Extra Extra Large \nEnter Option: ");
+    printf(""MAGENTA" Size:"RESET" S - Small, M - Medium, L - Large, XL - Extra Large, XXL - Extra Extra Large \nEnter Option: ");
     scanf("%s", size);
     getchar();
     strcpy(P1[orderCount].size, size);
     if(customize)
     {
-        printf("Toppings: Corn, Pepperoni, Chili, Chicken Breast, Pickels, Olives. YOU CAN ONLY CHOOSE 3 TOPPINGS!\nIf you don't want toppings, press enter to skip...\n");
+        printf(""YELLOW"Toppings: "RESET"Corn, Pepperoni, Chili, Chicken Breast, Pickels, Olives. YOU CAN ONLY CHOOSE 3 TOPPINGS!\nIf you don't want toppings, press enter to skip...\n");
         
         fgets(toppings, sizeof(toppings), stdin);
         strcpy(toppings, strlwr(toppings));
         toppings[strcspn(toppings, "\n")] = '\0';  //searching index of \n and replacing it with \0
         strcpy(P1[orderCount].toppings, toppings);
         
-        printf("Sauces: Ketchup, Mayonnaise, Mustard, Hot Sauce, Sour Souce.\nYOU CAN ONLY CHOOSE 2 SAUCES!\nIf you don't want sauces, press enter to skip...\n");
+        printf(""YELLOW"Sauces:"RESET" Ketchup, Mayonnaise, Mustard, Hot Sauce, Sour Souce.\nYOU CAN ONLY CHOOSE 2 SAUCES!\nIf you don't want sauces, press enter to skip...\n");
         fgets(sauces, sizeof(sauces), stdin);
         strcpy(sauces, strlwr(sauces));
         sauces[strcspn(sauces, "\n")] = '\0';
@@ -262,19 +270,18 @@ int Meniu_El_diablo(int nr)
             printf("2. Pizza Americana - Ingredients: Dough, Tomato sauce, Corn, Ham \n");
             printf("3. Pizza Prosciutto - Ingredients: Dough, Tomato sauce, Ham, Mushrooms, Olives \n");
             printf("4. Pizza Hawaii - Ingredients: Dough, Tomato sauce, Ananas, Ham \n");
-            printf("5. Back\n");
+            printf("5. "RED"Back"RESET"\n");
             printf("Choose pizza: ");
             scanf("%d", &b);
             getchar();
             if(b == 5)
                 break;
             SystemClear();
-            printf("Do you want to customize your pizza?(Y/N): ");
+            printf("Do you want to customize your pizza?("GREEN"Y"RESET"/"RED"N"RESET"): ");
             scanf("%c", &answer);
             answer = tolower(answer);
             if(answer == 'y')
                 customize = 1;
-
             switch (b)
             {
                 case 1:
@@ -282,55 +289,71 @@ int Meniu_El_diablo(int nr)
                     customize_pizza(customize);
                     strcpy(P1[orderCount].pizza_name, "Pizza Diavola");
                     P1[orderCount].Price += 50;
-                    if(customize) 
-                        strcat(P1[orderCount].pizza_name, " Customized: \nSize: ");
-                    else strcat(P1[orderCount].pizza_name, "\nSize:");
+                    if (customize)
+                        strcat(P1[orderCount].pizza_name, " Customized: | Size: ");
+                    else
+                        strcat(P1[orderCount].pizza_name, " | Size: ");
                     break;
-                case 2: 
+            
+                case 2:
                     customize_pizza(customize);
                     strcpy(P1[orderCount].pizza_name, "Pizza Americana");
-                    if(customize) 
-                        strcat(P1[orderCount].pizza_name, " Customized: \nSize: ");
-                    else strcat(P1[orderCount].pizza_name, "\nSize:");
+                    if (customize)
+                        strcat(P1[orderCount].pizza_name, " Customized: | Size: ");
+                    else
+                        strcat(P1[orderCount].pizza_name, " | Size: ");
                     break;
-                case 3: 
+            
+                case 3:
                     customize_pizza(customize);
                     strcpy(P1[orderCount].pizza_name, "Pizza Prosciutto");
-                    if(customize) 
-                        strcat(P1[orderCount].pizza_name, " Customized: \nSize: ");
-                    else strcat(P1[orderCount].pizza_name, "\nSize:");
+                    if (customize)
+                        strcat(P1[orderCount].pizza_name, " Customized: | Size: ");
+                    else
+                        strcat(P1[orderCount].pizza_name, " | Size: ");
                     break;
-                case 4: 
+            
+                case 4:
                     customize_pizza(customize);
                     strcpy(P1[orderCount].pizza_name, "Pizza Hawaii");
-                    if(customize) 
-                        strcat(P1[orderCount].pizza_name, " Customized: \nSize: ");
-                    else strcat(P1[orderCount].pizza_name, "\nSize:");
+                    if (customize)
+                        strcat(P1[orderCount].pizza_name, " Customized: | Size: ");
+                    else
+                        strcat(P1[orderCount].pizza_name, " | Size: ");
                     break;
+            
+                case 5:
+                    return 0;  // go back without placing the order
+                    break;
+            
                 default:
                     printf("Invalid choice!");
-                    // there might be a problem here, might escape without ordering a pizza
-                    break;
+                    return 0; // prevent placing an invalid order
+                break;
             }
+                
             strcpy(orderHistory[orderCount].items, P1[orderCount].pizza_name);
             strcat(orderHistory[orderCount].items, P1[orderCount].size);
             
-
-            if(strlen(P1[orderCount].toppings))
+            if (strlen(P1[orderCount].toppings))
             {
-                strcat(orderHistory[orderCount].items, "\nToppings: ");
+                strcat(orderHistory[orderCount].items, " | Toppings: ");
                 strcat(orderHistory[orderCount].items, P1[orderCount].toppings);
             }
-            else 
-                strcat(orderHistory[orderCount].items, "\nToppings: None");
-
-            if(strlen(P1[orderCount].sauces))
+            else
             {
-                strcat(orderHistory[orderCount].items, "\nSauces: ");
-                strcat(orderHistory[orderCount].items, P1[orderCount].sauces);   
+                strcat(orderHistory[orderCount].items, " | Toppings: None");
             }
-            else 
-                strcat(orderHistory[orderCount].items, "\nSauces: None");
+            
+            if (strlen(P1[orderCount].sauces))
+            {
+                strcat(orderHistory[orderCount].items, " | Sauces: ");
+                strcat(orderHistory[orderCount].items, P1[orderCount].sauces);
+            }
+            else
+            {
+                strcat(orderHistory[orderCount].items, " | Sauces: None");
+            }
             break;
         case 2:
             SystemClear();
@@ -456,7 +479,7 @@ int Meniu_El_diablo(int nr)
                     strcpy(orderHistory[orderCount].items, "Hugo");
                     break;
                 case 5:
-                    strcpy(orderHistory[orderCount].items, "Beew");    
+                    strcpy(orderHistory[orderCount].items, "Beer");    
                     break;
                 case 6:
                     strcpy(orderHistory[orderCount].items, "Rum");
@@ -471,6 +494,7 @@ int Meniu_El_diablo(int nr)
         break;
         
     }
+    return 0;
 }
 
 void Meniu_Indian_Bistro(int nr)
@@ -559,7 +583,7 @@ void El_Diablo()
     SystemClear();
 
     printf("---------------------\n");
-    printf("El Diablo Menu\n");
+    printf(""RED"El Diablo Menu"RESET"\n");
     printf("---------------------\n");
     printf("1. Pizza Catalog\n");
     printf("2. Burger Catalog\n");
@@ -580,7 +604,7 @@ void Mind_Space()
     SystemClear();
 
     printf("---------------------\n");
-    printf("Mind Space Menu\n");
+    printf(""RED"Mind Space Menu"RESET"\n");
     printf("---------------------\n");
     printf("1. Pizza Catalog\n");
     printf("2. Burger Catalog\n");
@@ -601,7 +625,7 @@ void Taglatele()
     SystemClear();
 
     printf("---------------------\n");
-    printf("Taglatele Menu\n");
+    printf(""RED"Taglatele Menu"RESET"\n");
     printf("---------------------\n");
     printf("1. Pizza Catalog\n");
     printf("2. Burger Catalog\n");
@@ -621,7 +645,7 @@ void Crazy_Pizza()
     SystemClear();
 
     printf("---------------------\n");
-    printf("Crazy Pizza Menu\n");
+    printf(""RED"Crazy Pizza Menu"RESET"\n");
     printf("---------------------\n");
     printf("1. Pizza Catalog\n");
     printf("2. Burger Catalog\n");
@@ -648,7 +672,7 @@ void Indian_Bistro()
     SystemClear();
 
     printf("---------------------\n");
-    printf("Indian Bistro Menu\n");
+    printf(""RED"Indian Bistro Menu"RESET"\n");
     printf("---------------------\n");
     printf("1. Coffee\n");
     printf("2. Ice Coffee\n");
@@ -688,7 +712,7 @@ int main()
                 Indian_Bistro();
                 break;
             case 6:
-                printf("Review Orders: \n");
+                printf(""CYAN"Review Orders: "RESET"\n");
                 viewOrders();
                 break;
             case 7:
@@ -696,10 +720,10 @@ int main()
                 viewOrders();
                 break;
             case 0:
-                printf("Exiting...\n");
+                printf(""RED"Exiting..."RESET"\n");
                 break;
             default:
-                printf("Invalid Operation!\n");
+                printf(""RED"Invalid Operation!"RESET"\n");
                 break;
         }
     } while(option > 0);

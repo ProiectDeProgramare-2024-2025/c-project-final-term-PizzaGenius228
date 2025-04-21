@@ -1,22 +1,15 @@
-0,adw,El Diablo,Royal Burger,dwad,27/03/2025 14:57
-2,,El Diablo,Pizza Diavola Customized: 
-Size: XL
-Toppings: chilli chicken breast
-Sauces: hot sauce,dwad,27/03/2025 14:58
-5,ME,El Diablo,Cheese Burger,DADW,27/03/2025 16:07
 -------- Orders from 27/03/2025 14:57 --------
-6,Alfred,Mind Space,Royal Burger,Timisoara,27/03/2025 16:29
--------- Orders from 27/03/2025 14:57 --------
-8,Alfred,El Diablo,Shrimp Pasta,Here,28/03/2025 09:08
--------- Orders from 27/03/2025 14:57 --------
-8,Eu,El Diablo,Carbonara,LA mine,28/03/2025 11:31
--------- Orders from 11/04/2025 11:36 --------
-0,Alfred,El Diablo,Pizza Americana Customized: 
-Size: xl
-Toppings: chili
-Sauces: ketchup,la mine,11/04/2025 11:36
--------- Orders from 11/04/2025 11:41 --------
-0,eu,Mind Space,Pizza Hawaii Customized: 
-Size: l
-Toppings: olives
-Sauces: None,maasas,11/04/2025 11:41
+21,alasd,El Diablo,Royal Burger,adaw,21/04/2025 18:18
+-------- Orders from 21/04/2025 18:18 --------
+1,,Mind Space,Spaghetti,adaw,21/04/2025 18:19
+-------- Orders from 21/04/2025 18:31 --------
+0,Alfred,El Diablo,Pizza Diavola Customized: | Size: XXL | Toppings: chicken breast | Sauces: ketchup,Here,21/04/2025 18:31
+-------- Orders from 21/04/2025 18:32 --------
+0,Alfred,El Diablo,Pizza Diavola Customized: | Size: XXL | Toppings: chili | Sauces: ketchup,Haha,21/04/2025 18:32
+1,Alfred,El Diablo,Royal Burger,Haha,21/04/2025 18:33
+2,ALfred,El Diablo,Pizza Prosciutto | Size: M | Toppings: None | Sauces: None,Haha,21/04/2025 18:33
+
+-------- Orders from 21/04/2025 19:06 --------
+0,ALFRED,El Diablo,Pizza Hawaii | Size: XL | Toppings: None | Sauces: None,DADAD,21/04/2025 19:06
+-------- Orders from 21/04/2025 19:12 --------
+0,Alfred,El Diablo,Pizza Diavola Customized: | Size: XXL | Toppings: chicken breast | Sauces: hot sauce,Timisoara,21/04/2025 19:12
